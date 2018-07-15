@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>
+        Orders
+    </h3>
+    <div class="count">
+        total items count - {{ pagination.getTotalItemCount }}
+    </div>
+    <table>
+        <tr>
+            <th>{{ knp_pagination_sortable(pagination, 'Id', 'o.id') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'orderId', 'o.orderId') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Status', 'o.status') }}</th>
+            <th>Amount</th>
+            <th>Items</th>
+            <th>Action</th>
+        </tr>
+
+        {% for order in pagination %}
+            <tr {% if loop.index is odd %}class="color"{% endif %}>
+                <td>{{ order.id }}</td>
+                <td>{{ order.orderId }}</td>
+                <td class="status">{{ order.status }}</td>
+                <td>{{ order.amount.getReadableAmount }}</td>
+                <td>{{ order.orderItems }}</td>
+                <td>
+                    <a href="{{ path('check_status', {'orderId': order.orderId}) }}">Check status</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

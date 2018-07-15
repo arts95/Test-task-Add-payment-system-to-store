@@ -1,0 +1,31 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+    countryPluginUrl: 'http://www.geoplugin.net/json.gp'
+    gateMerchantId: 'unicorn'
+    gatePrivateKey: '02e2a839-4e5e-43f6-b889-25d154f458cf'
+    gateServerUrl: 'https://pay.sp-stage.us/api/v1/'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository,DTO,DataFixtures}'
+
+    api.service.signedpay:
+        class: Signedpay\API\Api
+        arguments: ['%gatemerchantid%', '%gateprivatekey%', '%gateserverurl%']
+
+    AppBundle\Service\SolidGateService:
+        arguments: ['@api.service.signedpay', '@logger']
+
+    AppBundle\Service\CountryService:
+        arguments: ['%countrypluginurl%']
+
+    AppBundle\DataFixtures\:
+        resource: '../../src/AppBundle/DataFixtures'
+        tags: ['@doctrine.fixtures.loader']
